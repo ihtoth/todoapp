@@ -1,0 +1,11 @@
+<p>Edit the task with ID = {{ number }}</p>
+
+<form action="/edit-item/{{ number }}" method="POST">
+  <input type="text" name="task" value="{{ old }}" size="100" maxlength="100">
+  <select name="status">
+    <option>open</option>
+    <option>closed</option>
+  </select>
+  <br>
+  <input type="submit" name="save" value="save">
+</form>

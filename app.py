@@ -25,13 +25,32 @@ def new_item():
     if request.method == 'GET':
         return render_template('new_item.html')
     con = connect(db_file)
-    c = con.cursor()
-    c.execute(
+    cur = con.cursor()
+    cur.execute(
         "INSERT INTO todo (task,status) VALUES (?,?)",
         (request.form['task'].strip(), 1)
     )
     con.commit()
-    c.close()
+    return redirect('/todo')
+
+
+@app.route('/edit-item/<int:number>', methods=['GET', 'POST'])
+def edit_item(number):
+    con = connect(db_file)
+    cur = con.cursor()
+
+    if request.method == 'GET':
+        cur.execute("SELECT task FROM todo WHERE id LIKE ?", (str(number)))
+        old = cur.fetchone()
+        return render_template('edit_item.html', number=number, old=old[0])
+
+    new, status = request.form['task'], request.form['status']
+    status = int(status == 'open')
+    cur.execute(
+        "UPDATE todo SET task = ?, status = ? WHERE id LIKE ?",
+        (new, status, number)
+    )
+    con.commit()
     return redirect('/todo')
 
 

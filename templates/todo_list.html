@@ -1,11 +1,11 @@
-<p>To Do:</p>
+<h1>To Do</h1>
 
 <table border="0">
-    {% for row in rows %}
+    {% for number, text in rows %}
     <tr>
-        {% for col in row %}
-        <td>{{ col }}</td>
-        {% endfor %}
+        <td><a href="/edit-item/{{number}}">edit</a> </td>
+        <td></td>
+        <td>{{ text }}</td>
     </tr>
     {% endfor %}
 </table>
