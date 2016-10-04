@@ -1,5 +1,8 @@
-<h1>Tasks</h1>
+{% extends "layout.html" %}
 
+{% block title %}Tasks{% endblock %}
+
+{% block content %}
 <table border="0">
     {% for item in rows %}
     <tr>
@@ -9,3 +12,4 @@
     </tr>
     {% endfor %}
 </table>
+{% endblock %}

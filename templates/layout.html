@@ -1,0 +1,26 @@
+<!doctype html>
+
+<html>
+    <head>
+        {% block head %}
+            <title>To Do App</title>
+        {% endblock %}
+    </head>
+
+    <body>
+        <h1>To Do App</h1>
+        <a href="{{ url_for('todo') }}">home</a> |
+        <a href="{{ url_for('new_item') }}">new item</a>
+        <hr>
+
+        <h2>{% block title %}{% endblock %}</h2>
+
+        {% block content %}{% endblock %}
+
+        {% block footer %}
+        <br>
+        <br>
+        &copy Copyright 2010 by <a href="http://www.intel.com">Intel Corporation</a>
+        {% endblock %}
+    </body>
+</html>
