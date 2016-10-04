@@ -47,7 +47,7 @@ def edit_item(number):
 @app.route('/old-items')
 def deleted_items():
     items = Item.query.filter_by(active=False).all()
-    return render_template('list.html', title='Old Items', rows=items)
+    return render_template('list.html', title='Completed', rows=items)
 
 
 def create_db():
