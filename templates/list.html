@@ -5,11 +5,9 @@
 {% block content %}
 <table border="0">
     {% for item in rows %}
-    <tr>
-        <td><a href="/edit-item/{{ item.id }}">edit</a> </td>
-        <td></td>
-        <td>{{ item.text }}</td>
-    </tr>
+    <ul>
+        <li>{{ item.text }} <a href="/edit-item/{{ item.id }}">edit</a> </li>
+    </ul>
     {% endfor %}
 </table>
 {% endblock %}
