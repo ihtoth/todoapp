@@ -2,85 +2,75 @@ from os.path import dirname, abspath, join
 from sqlite3 import connect
 
 from flask import Flask, redirect, request, render_template
+from flask_sqlalchemy import SQLAlchemy
 
 local_dir = dirname(abspath(__file__))
 db_file = join(local_dir, 'todo.db')
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_file
+db = SQLAlchemy(app)
+
+
+class Item(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    active = db.Column(db.Boolean, nullable=False)
+    text = db.Column(db.String)
 
 
 @app.route('/todo')
 def todo():
-    con = connect(db_file)
-    c = con.cursor()
-    c.execute("SELECT id, task FROM todo WHERE status LIKE '1'")
-    result = c.fetchall()
-    c.close()
-    return render_template('todo_list.html', rows=result)
+    items = Item.query.filter_by(active=True).all()
+    return render_template('todo_list.html', rows=items)
 
 
 @app.route('/new-item', methods=['GET', 'POST'])
 def new_item():
     if request.method == 'GET':
         return render_template('new_item.html')
-    con = connect(db_file)
-    cur = con.cursor()
-    cur.execute(
-        "INSERT INTO todo (task,status) VALUES (?,?)",
-        (request.form['task'].strip(), 1)
-    )
-    con.commit()
+    db.session.add(Item(text=request.form['task'].strip(), active=True))
+    db.session.commit()
     return redirect('/todo')
 
 
 @app.route('/edit-item/<int:number>', methods=['GET', 'POST'])
 def edit_item(number):
-    con = connect(db_file)
-    cur = con.cursor()
-
+    item = Item.query.filter_by(id=number).first()
     if request.method == 'GET':
-        cur.execute("SELECT task FROM todo WHERE id LIKE ?", (str(number)))
-        old = cur.fetchone()
-        return render_template('edit_item.html', number=number, old=old[0])
-
-    new, status = request.form['task'], request.form['status']
-    status = int(status == 'open')
-    cur.execute(
-        "UPDATE todo SET task = ?, status = ? WHERE id LIKE ?",
-        (new, status, number)
-    )
-    con.commit()
+        return render_template('edit_item.html', old=item)
+    item.text = request.form['task'].strip()
+    item.active = request.form['active'] == 'open'
+    db.session.add(item)
+    db.session.commit()
     return redirect('/todo')
 
 
 @app.cli.command()
 def create_db():
     print('creating db')
-    con = connect(db_file)
-    con.execute(
-        "CREATE TABLE todo "
-        "(id INTEGER PRIMARY KEY, "
-        "task char(100) NOT NULL, "
-        "status bool NOT NULL)"
-    )
-    con.commit()
+    db.create_all()
 
 
 @app.cli.command()
 def preload_db():
-    con = connect(db_file)
-    con.execute(
-        "INSERT INTO todo (task,status) VALUES "
-        "('Read A-byte-of-python to get a good introduction into Python',0)"
+    db.session.add_all(
+        Item(
+            text='Read A-byte-of-python to get a good introduction into Python',
+            active=False,
+        ),
+        Item(
+            text='Visit the Python website',
+            active=True,
+        ),
+        Item(
+            text='Test various editors for and check the syntax highlighting',
+            active=True,
+        ),
+        Item(
+            text='Choose your favorite WSGI-Framework',
+            active=False,
+        )
     )
-    con.execute(
-        "INSERT INTO todo (task,status) VALUES ('Visit the Python website',1)")
-    con.execute(
-        "INSERT INTO todo (task,status) VALUES "
-        "('Test various editors for and check the syntax highlighting',1)")
-    con.execute(
-        "INSERT INTO todo (task,status) VALUES "
-        "('Choose your favorite WSGI-Framework',0)")
-    con.commit()
+    db.session.commit()
 
 
 if __name__ == '__main__':
