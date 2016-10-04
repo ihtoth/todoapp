@@ -1,11 +1,17 @@
+<h1>Edit</h1>
 <p>Edit the task with ID = {{ number }}</p>
 
 <form action="/edit-item/{{ old.id }}" method="POST">
-  <input type="text" name="task" value="{{ old.text }}" size="100" maxlength="100">
-  <select name="status">
-    <option>open</option>
-    <option>closed</option>
-  </select>
-  <br>
-  <input type="submit" name="save" value="save">
+    <input type="text" name="task" value="{{ old.text }}" size="100" maxlength="100">
+    <select name="status">
+        {% if old.active %}
+        <option selected="selected">open</option>
+        <option>closed</option>
+        {% else %}
+        <option>open</option>
+        <option selected="selected">closed</option>
+        {% endif %}
+    </select>
+    <br>
+    <input type="submit" name="save" value="save">
 </form>

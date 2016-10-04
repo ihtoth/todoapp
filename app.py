@@ -1,5 +1,4 @@
 from os.path import dirname, abspath, join
-from sqlite3 import connect
 
 from flask import Flask, redirect, request, render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -17,6 +16,7 @@ class Item(db.Model):
     text = db.Column(db.String)
 
 
+@app.route('/')
 @app.route('/todo')
 def todo():
     items = Item.query.filter_by(active=True).all()
@@ -32,13 +32,13 @@ def new_item():
     return redirect('/todo')
 
 
-@app.route('/edit-item/<int:number>', methods=['GET', 'POST'])
+@app.route('/edit-item/<number>', methods=['GET', 'POST'])
 def edit_item(number):
     item = Item.query.filter_by(id=number).first()
     if request.method == 'GET':
         return render_template('edit_item.html', old=item)
     item.text = request.form['task'].strip()
-    item.active = request.form['active'] == 'open'
+    item.active = request.form['status'] == 'open'
     db.session.add(item)
     db.session.commit()
     return redirect('/todo')
@@ -50,9 +50,9 @@ def create_db():
     db.create_all()
 
 
-@app.cli.command()
 def preload_db():
-    db.session.add_all(
+    print('loading default db')
+    db.session.add_all([
         Item(
             text='Read A-byte-of-python to get a good introduction into Python',
             active=False,
@@ -69,7 +69,7 @@ def preload_db():
             text='Choose your favorite WSGI-Framework',
             active=False,
         )
-    )
+    ])
     db.session.commit()
 
 
