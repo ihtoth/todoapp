@@ -2,25 +2,22 @@
 
 <html>
     <head>
-        {% block head %}
-            <title>To Do App</title>
-        {% endblock %}
+        <title>To Do App</title>
     </head>
 
     <body>
         <h1>To Do App</h1>
         <a href="{{ url_for('todo') }}">home</a> |
-        <a href="{{ url_for('new_item') }}">new item</a>
+        <a href="{{ url_for('new_item') }}">new item</a> |
+        <a href="{{ url_for('deleted_items') }}">past items</a>
         <hr>
 
         <h2>{% block title %}{% endblock %}</h2>
 
         {% block content %}{% endblock %}
 
-        {% block footer %}
         <br>
         <br>
-        &copy Copyright 2010 by <a href="http://www.intel.com">Intel Corporation</a>
-        {% endblock %}
+        &copy Copyright 2016 by <a href="http://www.intel.com">Intel Corporation</a>
     </body>
 </html>

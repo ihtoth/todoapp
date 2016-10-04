@@ -20,7 +20,7 @@ class Item(db.Model):
 @app.route('/todo')
 def todo():
     items = Item.query.filter_by(active=True).all()
-    return render_template('todo_list.html', rows=items)
+    return render_template('todo_list.html', title='Tasks', rows=items)
 
 
 @app.route('/new-item', methods=['GET', 'POST'])
@@ -44,7 +44,12 @@ def edit_item(number):
     return redirect('/todo')
 
 
-@app.cli.command()
+@app.route('/old-items')
+def deleted_items():
+    items = Item.query.filter_by(active=False).all()
+    return render_template('todo_list.html', title='Old Items', rows=items)
+
+
 def create_db():
     print('creating db')
     db.create_all()
