@@ -18,7 +18,8 @@ todo_list = [
 
 @app.route('/')
 def index():
-    return render_template('list.html', title='To Do List', rows=todo_list)
+    active = [i for i in todo_list if i.active]
+    return render_template('list.html', title='To Do List', rows=active)
 
 
 if __name__ == '__main__':
