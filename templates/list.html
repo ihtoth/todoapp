@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<table>
+    <h2>{{ title }}</h2>
+    {% for item in rows %}
+    <ul>
+        <li>{{ item.text }} <a href="/edit-item/{{ item.id }}">edit</a> </li>
+    </ul>
+    {% endfor %}
+</table>
+{% endblock %}
