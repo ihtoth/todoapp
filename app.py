@@ -49,5 +49,13 @@ def edit_item(number):
     return redirect('/')
 
 
+@app.route('/new-item/', methods=['GET', 'POST'])
+def new_item():
+    if request.method == 'GET':
+        return render_template('new_item.html')
+    todo_list.append(ToDoItem(request.form['task']))
+    return redirect('/')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
