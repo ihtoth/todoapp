@@ -22,5 +22,11 @@ def index():
     return render_template('list.html', title='To Do List', rows=active)
 
 
+@app.route('/completed-items/')
+def completed_items():
+    completed = [i for i in todo_list if not i.active]
+    return render_template('list.html', title='Completed Items', rows=completed)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
